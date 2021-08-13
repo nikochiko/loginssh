@@ -89,7 +89,7 @@ class Login(Model):
         self.name = name
         self.username = username
         self.host = host
-        self.profile_id = self.profile_id
+        self.profile_id = profile_id
 
         super().__init__()
 
