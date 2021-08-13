@@ -46,5 +46,22 @@ def init_profile():
     click.echo(f"✅ New profile created with id: {profile.id}")
 
 
+@cli.command("add")
+@click.option("--name",
+              help="Nickname for the SSH Connection (e.g. aws-company-1)",
+              prompt="Name for this SSH connection")
+@click.option("--host",
+              help="Host address for this connection",
+              prompt=True)
+@click.option("--username",
+              help="User to connect to on remote host",
+              prompt=True)
+def add_ssh(username, host, name):
+    profile = Profile.get_by(name=USERNAME)[0]
+    login = Login.new(
+            username=username, host=host, name=name, profile_id=profile.id)
+    click.echo(f"✅ Created new SSH login with id: {login.id}")
+
+
 if __name__ == "__main__":
     cli()

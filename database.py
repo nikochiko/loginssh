@@ -56,10 +56,10 @@ class Database:
 
     select_columns_from_table_by_kwargs = dedent("""
             SELECT
-                ?
+                %(columns)s
             FROM
-                ?
-            WHERE ?""")
+                %(tablename)s
+            WHERE %(conditions)s""")
 
     insert_into_table = dedent("""
             INSERT INTO %(tablename)s
@@ -102,10 +102,13 @@ class Database:
             columns: list[str],
             conditions: dict[str, Any],
             limit: Optional[int] = None) -> list[dict[str, Any]]:
+
+        sql_statement = self.get_select_columns_from_table_by_kwargs_sql(
+                table, columns, conditions, limit=limit)
+
         with self.conn:
             cursor = self.conn.execute(
-                    Database.select_columns_from_table_by_kwargs, (
-                        columns, table, conditions))
+                    sql_statement, list(conditions.values()))
 
             rows = cursor.fetchall()
 
@@ -130,6 +133,31 @@ class Database:
                 "columns": columns_str,
                 "values_qmarks": values_qmarks,
                 "returning_columns": returning_columns_str}
+        return sql_statement
+
+    def get_select_columns_from_table_by_kwargs_sql(
+            self,
+            table: str,
+            columns: list[str],
+            conditions: dict[str, Any],
+            limit: Optional[int] = None) -> str:
+        columns_str = ", ".join(columns)
+        condition_ops = [
+                f"{condition_key} IS NOT"
+                if condition_value is None
+                else f"{condition_key} ="
+                for condition_key, condition_value in conditions.items()]
+        conditions_str = " AND ".join(
+                f"{op} ?" for op in condition_ops)
+
+        sql_statement = self.select_columns_from_table_by_kwargs % {
+                "tablename": table,
+                "columns": columns_str,
+                "conditions": conditions_str}
+
+        if limit:
+            sql_statement += f" LIMIT {limit}"
+
         return sql_statement
 
     def execute_insert_into_table(
