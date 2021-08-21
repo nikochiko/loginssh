@@ -5,10 +5,43 @@ from typing import Any
 from database import Database
 
 
+class ModelException(Exception):
+    pass
+
+
+def get_more_than_one_results_exception():
+    class MoreThanOneResultsException(ModelException):
+        def __init__(self, *args, **kwargs):
+            if args:
+                return super().__init__(*args, **kwargs)
+
+            return super().__init__(
+                    "Query returned more than 1 results", **kwargs)
+
+    return MoreThanOneResultsException
+
+
+def get_not_found_exception_class():
+    class NotFoundException(ModelException):
+        def __init__(self, *args, **kwargs):
+            if args:
+                return super().__init__(*args, **kwargs)
+
+            return super().__init__(
+                    "Couldn't find a row that matches the given constraints",
+                    **kwargs)
+
+    return NotFoundException
+
+
 class Model:
     __tablename__ = None
     __columns__ = None
     __pk_column__ = "id"
+
+    ModelException = ModelException
+    NotFoundException = get_not_found_exception_class()
+    MoreThanOneResultsException = get_more_than_one_results_exception()
 
     @classmethod
     @property
@@ -39,7 +72,16 @@ class Model:
 
     @classmethod
     def get_by(cls, **kwargs):
-        return cls.get_columns_by_conditions(cls.__columns__, kwargs)
+        objs = cls.get_columns_by_conditions(cls.__columns__, kwargs)
+        if len(objs) > 1:
+            raise cls.MoreThanOneResultsException()
+
+        return objs[0]
+
+    @classmethod
+    def filter_by(cls, **kwargs):
+        objs = cls.get_columns_by_conditions(cls.__columns__, kwargs)
+        return objs
 
     @classmethod
     def new(cls, **kwargs):
@@ -52,6 +94,14 @@ class Model:
 
     def __init__(self):
         self.db = Database(os.getenv("DB_PATH"))
+
+
+class Migration(Model):
+    """
+    Class for migrations table that is used internally to track DB migrations
+    """
+    __tablename__ = "migrations"
+    __columns__ = ["id", "name", "hash", "previous", "next"]
 
 
 class Profile(Model):
@@ -77,17 +127,19 @@ class Profile(Model):
 
 class Login(Model):
     __tablename__ = "logins"
-    __columns__ = ["id", "name", "username", "host", "profile_id"]
+    __columns__ = ["id", "name", "username", "password", "host", "profile_id"]
 
     def __init__(self,
                  id: int,
                  name: str,
                  username: str,
+                 password: str,
                  host: str,
                  profile_id: int):
         self.id = id
         self.name = name
         self.username = username
+        self.password = password
         self.host = host
         self.profile_id = profile_id
 

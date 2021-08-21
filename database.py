@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from textwrap import dedent
 
@@ -67,15 +68,29 @@ class Database:
             VALUES (%(values_qmarks)s)
             RETURNING %(returning_columns)s""")
 
-    def __init__(self, db_path):
+    def __init__(self, db_path: os.PathLike):
         self.db_path = db_path
         self.conn = sqlite3.connect(db_path)
-        self.conn.set_trace_callback(print)
+        if os.getenv("DEBUG"):
+            self.conn.set_trace_callback(print)
+
+    def _refresh_conn(self):
+        self.conn = sqlite3.connect(self.db_path)
 
     def init_db(self, profile_name: Optional[str] = None):
         with self.conn:
             self.conn.execute(Database.create_profiles_table)
             self.conn.execute(Database.create_logins_table)
+
+    def rm_db(self):
+        """Deletes the sqlite database"""
+        os.unlink(self.db_path)
+
+    def reset_db(self):
+        """Resets the sqlite database - remove and re-initialize"""
+        self.rm_db()
+        self._refresh_conn()
+        self.init_db()
 
     def execute_select_columns_from_table_by_id(
             self,
