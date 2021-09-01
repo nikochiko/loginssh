@@ -2,7 +2,7 @@ import hashlib
 import os
 from typing import Any
 
-from database import Database
+from .database import Database
 
 
 class ModelException(Exception):
@@ -144,6 +144,12 @@ class Login(Model):
         self.profile_id = profile_id
 
         super().__init__()
+
+    @classmethod
+    def get_names_by_profile_name(cls, profile_name: str) -> list[str]:
+        profile = Profile.get_by(name=profile_name)
+        logins = cls.filter_by(profile_id=profile.id)
+        return [login.name for login in logins]
 
     @property
     def profile(self):
