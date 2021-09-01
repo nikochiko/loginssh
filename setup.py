@@ -21,7 +21,8 @@ setup(
     url="http://packages.python.org/an_example_pypi_project",
     packages=["ssh_manager"],
     include_package_data=True,
-    long_description=read('README.md'),
+    long_description=read("README.md"),
+    long_description_content_type="text/markdown",
     classifiers=[
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
