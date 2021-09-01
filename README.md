@@ -19,7 +19,7 @@ eval $(_LOGINSSH_COMPLETE=bash_source loginssh)
 
 # in fish
 # add this to ~/.config/fish/completions/loginssh.fish
-eval eval (env _LOGINSSH_COMPLETE=fish_source loginssh)
+eval (env _LOGINSSH_COMPLETE=fish_source loginssh)
 ```
 
 ## How to install?
