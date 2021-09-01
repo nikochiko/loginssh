@@ -1,1 +1,0 @@
-_SSH_MANAGER_COMPLETE=source_zsh ssh-manager
