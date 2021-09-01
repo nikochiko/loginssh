@@ -42,6 +42,8 @@ I didn't have to write this. I could use something already available, but then
 I wouldn't have gotten to also rewrite ORMs and password managers. Yes, hidden in this repository is a
 mini ORM and a mini password manager. I also like to flex that I use my own tools.   
 
+## Note
+
 I won't be actively pushing code to this repo. I will keep using it for my personal use,
 but most probably that won't be needing any more changes.
 
