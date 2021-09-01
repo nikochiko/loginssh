@@ -1,6 +1,10 @@
 # logins.sh (LoginSSH)
 
-Works with tmux and fzf
+Works with tmux and fzf. You don't need to do a separate configuration to enable it, if you are in tmux,
+it will use tmux. If fzf binary is in path, it will use fzf to show the list of SSH connections, then
+depending on the choice, it will open up the SSH connection into that instance.
+
+Depends on sshpass when the instance has a password.
 
 To add autocomplete features, run this:
 
