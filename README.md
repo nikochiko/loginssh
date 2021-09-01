@@ -22,6 +22,19 @@ eval $(_LOGINSSH_COMPLETE=bash_source loginssh)
 eval eval (env _LOGINSSH_COMPLETE=fish_source loginssh)
 ```
 
+## How to install?
+
+From pip:
+```sh
+# requires python3.9
+python3.9 -m pip install loginssh
+```
+
+For main branch,
+
+1. `git clone https://github.com/nikochiko/loginssh && cd loginssh`
+1. `pip3 install -e loginssh`
+
 ## Why did I do this?
 I enjoyed making this.
 
