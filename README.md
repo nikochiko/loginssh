@@ -38,7 +38,7 @@ For main branch,
 ## Why did I do this?
 I enjoyed making this.
 
-I didn't have to write this. I could use something already available, but then
+I didn't have to write this. I could use ~/.ssh/config, but then
 I wouldn't have gotten to also rewrite ORMs and password managers. Yes, hidden in this repository is a
 mini ORM and a mini password manager. I also like to flex that I use my own tools.   
 
